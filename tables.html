@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>QR de mesas | Deb&Lopers</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="tables">
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Volver al inicio">
+      <span class="brand__icon">🍽️</span>
+      <span>
+        <strong>Deb&Lopers</strong>
+        <small>QR de mesas</small>
+      </span>
+    </a>
+
+    <nav class="topbar__nav" aria-label="Navegación principal">
+      <a href="index.html">Inicio</a>
+      <a href="entrance.html">Entrada</a>
+      <a href="tips.html">Propinas</a>
+    </nav>
+
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema">
+      <span data-theme-icon>🌙</span>
+      <span data-theme-label>Oscuro</span>
+    </button>
+  </header>
+
+  <main class="page-shell">
+    <section class="section-heading section-heading--center">
+      <p class="eyebrow">Mesas del restaurante</p>
+      <h1>🍽️ QR de mesas</h1>
+      <p>Cada QR vincula al cliente con una mesa específica mediante deep links.</p>
+    </section>
+
+    <section id="tablesGrid" class="qr-grid" aria-label="Listado de QR de mesas"></section>
+
+    <section class="panel">
+      <h2>Funcionalidades esperadas al escanear</h2>
+      <ul class="check-list">
+        <li>Acceder al menú de productos.</li>
+        <li>Realizar pedidos para la mesa.</li>
+        <li>Consultar al mozo.</li>
+        <li>Ver estado del pedido.</li>
+        <li>Acceder a juegos, encuesta y cuenta según el estado de la estadía.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Deb&Lopers · QR de mesas</span>
+    <button class="link-button" type="button" onclick="window.print()">Imprimir</button>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

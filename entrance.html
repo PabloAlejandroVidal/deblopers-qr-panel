@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>QR de entrada | Deb&Lopers</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="entrance">
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Volver al inicio">
+      <span class="brand__icon">🍽️</span>
+      <span>
+        <strong>Deb&Lopers</strong>
+        <small>QR de entrada</small>
+      </span>
+    </a>
+
+    <nav class="topbar__nav" aria-label="Navegación principal">
+      <a href="index.html">Inicio</a>
+      <a href="tables.html">Mesas</a>
+      <a href="tips.html">Propinas</a>
+    </nav>
+
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema">
+      <span data-theme-icon>🌙</span>
+      <span data-theme-label>Oscuro</span>
+    </button>
+  </header>
+
+  <main class="page-shell page-shell--narrow">
+    <section class="qr-focus-card">
+      <p class="eyebrow">Ingreso al local</p>
+      <h1>🚪 Entrada al restaurante</h1>
+      <p>Escaneá este QR para ingresar a la lista de espera o consultar encuestas previas.</p>
+
+      <div id="entranceQr" class="qr-single"></div>
+
+      <div class="instructions">
+        <h2>Uso esperado</h2>
+        <ol>
+          <li>Abrir esta página en una PC, notebook, tablet o iPhone.</li>
+          <li>Escanear el QR con el Android que tenga instalada la APK.</li>
+          <li>La app debería abrir el flujo de entrada del restaurante.</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Deb&Lopers · QR de entrada</span>
+    <button class="link-button" type="button" onclick="window.print()">Imprimir</button>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

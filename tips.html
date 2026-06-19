@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>QR de propinas | Deb&Lopers</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="tips">
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Volver al inicio">
+      <span class="brand__icon">🍽️</span>
+      <span>
+        <strong>Deb&Lopers</strong>
+        <small>QR de propinas</small>
+      </span>
+    </a>
+
+    <nav class="topbar__nav" aria-label="Navegación principal">
+      <a href="index.html">Inicio</a>
+      <a href="entrance.html">Entrada</a>
+      <a href="tables.html">Mesas</a>
+    </nav>
+
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema">
+      <span data-theme-icon>🌙</span>
+      <span data-theme-label>Oscuro</span>
+    </button>
+  </header>
+
+  <main class="page-shell">
+    <section class="section-heading section-heading--center">
+      <p class="eyebrow">Satisfacción del cliente</p>
+      <h1>💰 QR de propinas</h1>
+      <p>El cliente escanea el QR correspondiente al nivel de satisfacción elegido.</p>
+    </section>
+
+    <section id="tipLevels" class="tip-levels" aria-label="Niveles de satisfacción"></section>
+
+    <section id="tipsGrid" class="qr-grid qr-grid--tips" aria-label="Listado de QR de propinas"></section>
+
+    <section class="panel">
+      <h2>Uso esperado</h2>
+      <ol class="number-list">
+        <li>El cliente solicita la cuenta.</li>
+        <li>El mozo habilita el flujo de propina.</li>
+        <li>El cliente escanea el QR del porcentaje deseado.</li>
+        <li>La app aplica ese porcentaje a la cuenta final.</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Deb&Lopers · QR de propinas</span>
+    <button class="link-button" type="button" onclick="window.print()">Imprimir</button>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

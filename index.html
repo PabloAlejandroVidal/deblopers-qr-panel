@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Panel de QR | Deb&Lopers</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="home">
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Inicio Deb&Lopers">
+      <span class="brand__icon">🍽️</span>
+      <span>
+        <strong>Deb&Lopers</strong>
+        <small>Panel de QR</small>
+      </span>
+    </a>
+
+    <nav class="topbar__nav" aria-label="Navegación principal">
+      <a href="entrance.html">Entrada</a>
+      <a href="tables.html">Mesas</a>
+      <a href="tips.html">Propinas</a>
+    </nav>
+
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema">
+      <span data-theme-icon>🌙</span>
+      <span data-theme-label>Oscuro</span>
+    </button>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero hero--center">
+      <p class="eyebrow">Sistema auxiliar web</p>
+      <h1>QR estáticos para mostrar en pantalla, imprimir y probar la app</h1>
+      <p class="hero__text">
+        Abrí esta web desde una PC, notebook, tablet o iPhone. Luego escaneá los QR con el Android que tenga instalada la APK de La Comanda.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="tables.html">Ver QR de mesas</a>
+        <a class="btn" href="entrance.html">Ver QR de entrada</a>
+      </div>
+    </section>
+
+    <section class="cards-grid cards-grid--three" aria-label="Secciones del panel">
+      <article class="feature-card">
+        <div class="feature-card__icon">🚪</div>
+        <h2>Entrada al restaurante</h2>
+        <p>QR para lista de espera y acceso inicial del cliente.</p>
+        <a class="btn btn--small" href="entrance.html">Abrir entrada</a>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-card__icon">🍽️</div>
+        <h2>Mesas</h2>
+        <p>QR individuales para vincular clientes con una mesa asignada.</p>
+        <a class="btn btn--small" href="tables.html">Abrir mesas</a>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-card__icon">💰</div>
+        <h2>Propinas</h2>
+        <p>QR para seleccionar el nivel de satisfacción y porcentaje de propina.</p>
+        <a class="btn btn--small" href="tips.html">Abrir propinas</a>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <p class="eyebrow">Configuración actual</p>
+        <h2>Deep links disponibles</h2>
+      </div>
+      <div id="deepLinksSummary" class="deep-links-list"></div>
+    </section>
+
+    <section class="stats-grid" aria-label="Estadísticas del panel">
+      <article class="stat-card">
+        <strong id="totalQr">—</strong>
+        <span>QR totales</span>
+      </article>
+      <article class="stat-card">
+        <strong id="totalTables">—</strong>
+        <span>Mesas</span>
+      </article>
+      <article class="stat-card">
+        <strong>3</strong>
+        <span>Secciones</span>
+      </article>
+      <article class="stat-card">
+        <strong>100%</strong>
+        <span>Estático</span>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Deb&Lopers · Panel web estático de QR</span>
+    <span>Listo para GitHub Pages, Netlify, Vercel o Firebase Hosting.</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
