@@ -9,50 +9,18 @@
 </head>
 <body data-page="entrance">
   <header class="topbar">
-    <a class="brand" href="index.html" aria-label="Volver al inicio">
-      <span class="brand__icon">🍽️</span>
-      <span>
-        <strong>Deb&Lopers</strong>
-        <small>QR de entrada</small>
-      </span>
-    </a>
-
-    <nav class="topbar__nav" aria-label="Navegación principal">
-      <a href="index.html">Inicio</a>
-      <a href="tables.html">Mesas</a>
-      <a href="tips.html">Propinas</a>
+    <a class="brand" href="index.html" aria-label="Volver al inicio"><strong>Deb&Lopers</strong></a>
+    <nav class="topbar__nav" aria-label="Navegaci�n principal">
+      <a href="index.html">Inicio</a><a href="tables.html">Mesas</a><a href="tips.html">Propinas</a>
     </nav>
-
-    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema">
-      <span data-theme-icon>🌙</span>
-      <span data-theme-label>Oscuro</span>
-    </button>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema" title="Cambiar tema"><span data-theme-icon aria-hidden="true">??</span><span data-theme-label>Claro</span></button>
   </header>
-
   <main class="page-shell page-shell--narrow">
-    <section class="qr-focus-card">
-      <p class="eyebrow">Ingreso al local</p>
-      <h1>🚪 Entrada al restaurante</h1>
-      <p>Escaneá este QR para ingresar a la lista de espera o consultar encuestas previas.</p>
-
-      <div id="entranceQr" class="qr-single"></div>
-
-      <div class="instructions">
-        <h2>Uso esperado</h2>
-        <ol>
-          <li>Abrir esta página en una PC, notebook, tablet o iPhone.</li>
-          <li>Escanear el QR con el Android que tenga instalada la APK.</li>
-          <li>La app debería abrir el flujo de entrada del restaurante.</li>
-        </ol>
-      </div>
-    </section>
+    <section class="section-heading section-heading--center"><p class="eyebrow">QR de entrada</p><h1>Ingreso al local</h1><p>El cliente escanea el c�digo para ingresar al restaurante.</p></section>
+    <section id="entranceQr" class="qr-grid qr-grid--single" aria-label="C�digo QR de entrada"></section>
   </main>
-
-  <footer class="footer">
-    <span>Deb&Lopers · QR de entrada</span>
-    <button class="link-button" type="button" onclick="window.print()">Imprimir</button>
-  </footer>
-
+  <footer class="footer"><span>Deb&Lopers � QR de entrada</span><button class="link-button" type="button" onclick="window.print()">Imprimir</button></footer>
   <script src="app.js"></script>
 </body>
 </html>
+

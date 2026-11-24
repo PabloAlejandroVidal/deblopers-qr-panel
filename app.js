@@ -1,34 +1,36 @@
 const CONFIG = {
-  appName: 'Deb&Lopers',
   deepLinkBase: 'deblopers://',
   qrApiBase: 'https://api.qrserver.com/v1/create-qr-code/',
-  qrSizeLarge: '320x320',
+  tablesApiUrl: 'https://qaudgvxidpevlebivjdd.supabase.co/functions/v1/public-table-qr-codes',
+  // Publishable Supabase key: safe to use in a public, read-only frontend.
+  supabasePublishableKey: 'sb_publishable_sqsgXju7bObWWUCng5oQrg_YXL09KA6',
   qrSize: '260x260',
-  qrSizeSmall: '220x220',
 };
 
-const TABLES = [
-  { number: 1, capacity: 4, type: 'Estándar', tagClass: 'standard', icon: '🍽️' },
-  { number: 2, capacity: 2, type: 'Estándar', tagClass: 'standard', icon: '🍽️' },
-  { number: 3, capacity: 6, type: 'VIP', tagClass: 'vip', icon: '⭐' },
-  { number: 4, capacity: 4, type: 'Accesibilidad', tagClass: 'accessibility', icon: '🦽' },
-  { number: 5, capacity: 8, type: 'VIP', tagClass: 'vip', icon: '⭐' },
+const TIPS = [
+  { label: 'Malo', percent: 0 },
+  { label: 'Regular', percent: 5 },
+  { label: 'Bueno', percent: 10 },
+  { label: 'Muy bueno', percent: 15 },
+  { label: 'Excelente', percent: 20 },
 ];
 
-const TIPS = [
-  { label: 'Malo', emoji: '😞', percent: 0 },
-  { label: 'Regular', emoji: '😐', percent: 5 },
-  { label: 'Bueno', emoji: '🙂', percent: 10 },
-  { label: 'Muy bueno', emoji: '😊', percent: 15 },
-  { label: 'Excelente', emoji: '😍', percent: 20 },
-];
+const tableState = {
+  tables: [],
+  hasSuccessfulLoad: false,
+  updatedAt: null,
+  lastAttemptAt: null,
+  pendingRequest: null,
+  isLoading: false,
+  loadFailed: false,
+};
 
 function deepLink(path) {
   return `${CONFIG.deepLinkBase}${path}`;
 }
 
-function qrUrl(value, size = CONFIG.qrSize) {
-  return `${CONFIG.qrApiBase}?size=${size}&data=${encodeURIComponent(value)}`;
+function qrUrl(value) {
+  return `${CONFIG.qrApiBase}?size=${CONFIG.qrSize}&data=${encodeURIComponent(value)}`;
 }
 
 function escapeHtml(value) {
@@ -40,16 +42,30 @@ function escapeHtml(value) {
     .replaceAll("'", '&#039;');
 }
 
-function qrImageMarkup({ value, alt, size = CONFIG.qrSize }) {
+function qrImageMarkup({ value, alt }) {
   return `
     <div class="qr-img-wrap">
-      <img class="qr-image" src="${qrUrl(value, size)}" alt="${escapeHtml(alt)}" loading="lazy" width="260" height="260" />
+      <img class="qr-image" src="${qrUrl(value)}" alt="${escapeHtml(alt)}" loading="lazy" width="260" height="260" />
     </div>
   `;
 }
 
 function codePill(value) {
   return `<div class="code-pill"><span>${escapeHtml(value)}</span></div>`;
+}
+
+function qrCardMarkup({ title, description = '', value, alt }) {
+  return `
+    <article class="qr-card">
+      <div class="qr-card__heading">
+        <h2 class="qr-card__title">${escapeHtml(title)}</h2>
+        ${description ? `<p class="qr-card__meta">${escapeHtml(description)}</p>` : ''}
+      </div>
+      ${qrImageMarkup({ value, alt })}
+      ${codePill(value)}
+      <a class="btn btn--small" href="${value}">Probar QR</a>
+    </article>
+  `;
 }
 
 function initTheme() {
@@ -70,111 +86,207 @@ function setTheme(theme) {
 
   const isLight = theme === 'light';
   document.querySelectorAll('[data-theme-icon]').forEach((el) => {
-    el.textContent = isLight ? '☀️' : '🌙';
+    el.textContent = isLight ? '??' : '??';
   });
   document.querySelectorAll('[data-theme-label]').forEach((el) => {
-    el.textContent = isLight ? 'Claro' : 'Oscuro';
+    el.textContent = isLight ? 'Oscuro' : 'Claro';
   });
 }
 
 function renderHome() {
   const summary = document.getElementById('deepLinksSummary');
   if (summary) {
-    const rows = [
-      { label: 'Entrada', value: deepLink('entrance') },
-      ...TABLES.map((table) => ({ label: `Mesa ${table.number}`, value: deepLink(`table/${table.number}`) })),
-      ...TIPS.map((tip) => ({ label: `Propina ${tip.percent}%`, value: deepLink(`tip/${tip.percent}`) })),
+    const groups = [
+      {
+        section: 'Ingreso',
+        rows: [{ label: 'Entrada al restaurante', value: deepLink('entrance') }],
+      },
+      {
+        section: 'Mesas',
+        rows: tableState.hasSuccessfulLoad && tableState.tables.length
+          ? tableState.tables.map((table) => ({ label: `Mesa ${table.number}`, value: deepLink(`table/${table.id}`) }))
+          : [{ label: 'Mesas', value: tableState.loadFailed ? 'No disponibles' : 'Todav�a no hay mesas registradas.' }],
+      },
+      {
+        section: 'Propinas',
+        rows: TIPS.map((tip) => ({ label: `Propina ${tip.percent}% � ${tip.label}`, value: deepLink(`tip/${tip.percent}`) })),
+      },
     ];
-
-    summary.innerHTML = rows.map((row) => `
-      <div class="deep-link-item">
-        <strong>${escapeHtml(row.label)}</strong>
-        <span>${escapeHtml(row.value)}</span>
-      </div>
+    summary.innerHTML = groups.map((group) => `
+      <tr class="report-section-row"><th colspan="2" scope="colgroup">${escapeHtml(group.section)}</th></tr>
+      ${group.rows.map((row) => `
+        <tr class="report-data-row"><th scope="row">${escapeHtml(row.label)}</th><td class="report-link">${escapeHtml(row.value)}</td></tr>
+      `).join('')}
     `).join('');
   }
 
-  const totalQr = document.getElementById('totalQr');
-  const totalTables = document.getElementById('totalTables');
-  if (totalQr) totalQr.textContent = String(1 + TABLES.length + TIPS.length);
-  if (totalTables) totalTables.textContent = String(TABLES.length);
+  const count = document.getElementById('tableCountReport');
+  const qrCount = document.getElementById('qrCountReport');
+  if (count) count.textContent = tableState.hasSuccessfulLoad ? String(tableState.tables.length) : '-';
+  if (qrCount) qrCount.textContent = tableState.hasSuccessfulLoad ? String(1 + tableState.tables.length + TIPS.length) : '-';
+  updateApiReport();
+}
+
+function updateApiReport() {
+  const status = document.getElementById('apiReportStatus');
+  const updated = document.getElementById('updatedAtReport');
+  const attempted = document.getElementById('lastAttemptReport');
+  if (status) {
+    const label = tableState.isLoading
+      ? (tableState.hasSuccessfulLoad ? 'Actualizando.' : 'Consultando.')
+      : tableState.hasSuccessfulLoad
+      ? (tableState.loadFailed ? 'Fallida; datos previos conservados' : 'Correcta')
+      : (tableState.loadFailed ? 'Fallida' : 'Consultando.');
+    const state = tableState.isLoading ? 'loading' : (tableState.hasSuccessfulLoad && !tableState.loadFailed ? 'success' : (tableState.loadFailed ? 'error' : 'loading'));
+    status.innerHTML = `<span class="status-badge" data-state="${state}">${escapeHtml(label)}</span>`;
+  }
+  if (updated) updated.textContent = tableState.updatedAt ? formatUpdatedAt(tableState.updatedAt) : '-';
+  if (attempted) attempted.textContent = tableState.lastAttemptAt ? formatUpdatedAt(tableState.lastAttemptAt) : 'En curso.';
 }
 
 function renderEntrance() {
   const container = document.getElementById('entranceQr');
   if (!container) return;
-
   const value = deepLink('entrance');
-  container.innerHTML = `
-    <div class="qr-single__image-wrap">
-      <img class="qr-image" src="${qrUrl(value, CONFIG.qrSizeLarge)}" alt="QR de entrada al restaurante" width="320" height="320" />
-    </div>
-    ${codePill(value)}
-    <a class="btn btn--primary" href="${value}">Probar deep link en este dispositivo</a>
-  `;
+  container.innerHTML = qrCardMarkup({ title: 'Entrada', description: 'Ingreso al local', value, alt: 'QR de ingreso al local' });
 }
 
 function renderTables() {
   const grid = document.getElementById('tablesGrid');
   if (!grid) return;
 
-  grid.innerHTML = TABLES.map((table) => {
-    const value = deepLink(`table/${table.number}`);
-    return `
-      <article class="qr-card">
-        <div>
-          <h2 class="qr-card__title">${table.icon} Mesa ${table.number}</h2>
-          <div class="qr-card__meta">
-            <span class="tag">${table.capacity} personas</span>
-            <span class="tag tag--${table.tagClass}">${escapeHtml(table.type)}</span>
-          </div>
-        </div>
-        ${qrImageMarkup({ value, alt: `QR Mesa ${table.number}` })}
-        ${codePill(value)}
-        <a class="btn btn--small" href="${value}">Probar link</a>
-      </article>
-    `;
+  if (!tableState.hasSuccessfulLoad) {
+    grid.innerHTML = `<p class="empty-state">${tableState.loadFailed ? 'No se pudieron cargar las mesas. Revis� el estado y volv� a intentar.' : 'Cargando c�digos de mesas.'}</p>`;
+    return;
+  }
+
+  if (tableState.tables.length === 0) {
+    grid.innerHTML = '<p class="empty-state">Todav�a no hay mesas registradas.</p>';
+    return;
+  }
+
+  grid.innerHTML = tableState.tables.map((table) => {
+    const value = deepLink(`table/${table.id}`);
+    return qrCardMarkup({ title: `Mesa ${table.number}`, description: `Identificador ${table.id}`, value, alt: `QR Mesa ${table.number}` });
   }).join('');
 }
 
 function renderTips() {
-  const levels = document.getElementById('tipLevels');
-  if (levels) {
-    levels.innerHTML = TIPS.slice().reverse().map((tip) => `
-      <div class="tip-level">
-        <span><strong>${tip.emoji} ${escapeHtml(tip.label)}</strong></span>
-        <span class="tip-percent">${tip.percent}%</span>
-      </div>
-    `).join('');
-  }
-
   const grid = document.getElementById('tipsGrid');
   if (!grid) return;
 
   grid.innerHTML = TIPS.map((tip) => {
     const value = deepLink(`tip/${tip.percent}`);
-    return `
-      <article class="qr-card">
-        <div>
-          <h2 class="qr-card__title">${tip.emoji} Propina ${tip.percent}%</h2>
-          <p>${escapeHtml(tip.label)}</p>
-        </div>
-        ${qrImageMarkup({ value, alt: `QR Propina ${tip.percent}%`, size: CONFIG.qrSizeSmall })}
-        ${codePill(value)}
-        <a class="btn btn--small" href="${value}">Probar link</a>
-      </article>
-    `;
+    return qrCardMarkup({ title: `Propina ${tip.percent}%`, description: tip.label, value, alt: `QR Propina ${tip.percent}%` });
   }).join('');
+}
+
+function validateTablesResponse(payload) {
+  if (!payload || !Array.isArray(payload.tables)) {
+    throw new Error('La respuesta de la API no contiene una lista v�lida de mesas.');
+  }
+
+  const ids = new Set();
+  const numbers = new Set();
+  return payload.tables.map((table) => {
+    if (!table || !Number.isSafeInteger(table.id) || !Number.isSafeInteger(table.number)) {
+      throw new Error('La API devolvi� una mesa con identificador o n�mero inv�lido.');
+    }
+    if (ids.has(table.id) || numbers.has(table.number)) {
+      throw new Error('La API devolvi� identificadores o n�meros de mesa duplicados.');
+    }
+    ids.add(table.id);
+    numbers.add(table.number);
+    return { id: table.id, number: table.number };
+  });
+}
+
+function formatUpdatedAt(date) {
+  return new Intl.DateTimeFormat('es-AR', { dateStyle: 'short', timeStyle: 'short' }).format(date);
+}
+
+function updateTableStatus(message, state = 'info') {
+  const status = document.getElementById('tablesStatus');
+  if (status) {
+    status.textContent = message;
+    status.dataset.state = state;
+  }
+  updateApiReport();
+}
+
+function updateRefreshControls(isLoading) {
+  const button = document.getElementById('refreshTables');
+  if (button) {
+    button.disabled = isLoading;
+    button.setAttribute('aria-busy', String(isLoading));
+  }
+  const indicator = document.getElementById('tablesLoading');
+  if (indicator) indicator.hidden = !isLoading;
+}
+
+async function loadTables() {
+  if (tableState.pendingRequest) return tableState.pendingRequest;
+
+  updateRefreshControls(true);
+  tableState.isLoading = true;
+  tableState.lastAttemptAt = new Date();
+  tableState.loadFailed = false;
+  updateTableStatus(tableState.hasSuccessfulLoad ? 'Actualizando las mesas.' : 'Cargando las mesas.', 'loading');
+
+  tableState.pendingRequest = (async () => {
+    try {
+      const response = await fetch(CONFIG.tablesApiUrl, {
+        method: 'GET',
+        headers: { apikey: CONFIG.supabasePublishableKey },
+        cache: 'no-store',
+      });
+      if (!response.ok) throw new Error(`La API respondi� con el estado ${response.status}.`);
+
+      tableState.tables = validateTablesResponse(await response.json());
+      tableState.hasSuccessfulLoad = true;
+      tableState.loadFailed = false;
+      tableState.updatedAt = new Date();
+      renderTables();
+      renderHome();
+      const updateLabel = `Ultima actualizaci�n exitosa: ${formatUpdatedAt(tableState.updatedAt)}.`;
+      updateTableStatus(tableState.tables.length ? updateLabel : `Todav�a no hay mesas registradas. ${updateLabel}`, 'success');
+    } catch (error) {
+      tableState.loadFailed = true;
+      const detail = error instanceof TypeError
+        ? 'No se pudo conectar con el servicio. Revis� la conexi�n e intent� actualizar de nuevo.'
+        : error.message || 'Ocurri� un error al cargar las mesas.';
+      const warning = tableState.hasSuccessfulLoad
+        ? `No se pudieron actualizar las mesas. Se conservan los �ltimos datos v�lidos; podr�an estar desactualizados. ${detail}`
+        : `No se pudieron cargar las mesas. ${detail}`;
+      updateTableStatus(warning, 'error');
+      renderTables();
+      renderHome();
+    } finally {
+      tableState.isLoading = false;
+      tableState.pendingRequest = null;
+      updateRefreshControls(false);
+      updateApiReport();
+    }
+  })();
+
+  return tableState.pendingRequest;
 }
 
 function initPage() {
   initTheme();
-
   const page = document.body.dataset.page;
-  if (page === 'home') renderHome();
+  if (page === 'home') {
+    renderHome();
+    loadTables();
+  }
   if (page === 'entrance') renderEntrance();
-  if (page === 'tables') renderTables();
+  if (page === 'tables') {
+    renderTables();
+    document.getElementById('refreshTables')?.addEventListener('click', loadTables);
+    loadTables();
+  }
   if (page === 'tips') renderTips();
 }
 
 document.addEventListener('DOMContentLoaded', initPage);
+

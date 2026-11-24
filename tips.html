@@ -9,53 +9,18 @@
 </head>
 <body data-page="tips">
   <header class="topbar">
-    <a class="brand" href="index.html" aria-label="Volver al inicio">
-      <span class="brand__icon">🍽️</span>
-      <span>
-        <strong>Deb&Lopers</strong>
-        <small>QR de propinas</small>
-      </span>
-    </a>
-
-    <nav class="topbar__nav" aria-label="Navegación principal">
-      <a href="index.html">Inicio</a>
-      <a href="entrance.html">Entrada</a>
-      <a href="tables.html">Mesas</a>
+    <a class="brand" href="index.html" aria-label="Volver al inicio"><strong>Deb&Lopers</strong></a>
+    <nav class="topbar__nav" aria-label="Navegaci�n principal">
+      <a href="index.html">Inicio</a><a href="entrance.html">Entrada</a><a href="tables.html">Mesas</a>
     </nav>
-
-    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema">
-      <span data-theme-icon>🌙</span>
-      <span data-theme-label>Oscuro</span>
-    </button>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema" title="Cambiar tema"><span data-theme-icon aria-hidden="true">??</span><span data-theme-label>Claro</span></button>
   </header>
-
   <main class="page-shell">
-    <section class="section-heading section-heading--center">
-      <p class="eyebrow">Satisfacción del cliente</p>
-      <h1>💰 QR de propinas</h1>
-      <p>El cliente escanea el QR correspondiente al nivel de satisfacción elegido.</p>
-    </section>
-
-    <section id="tipLevels" class="tip-levels" aria-label="Niveles de satisfacción"></section>
-
-    <section id="tipsGrid" class="qr-grid qr-grid--tips" aria-label="Listado de QR de propinas"></section>
-
-    <section class="panel">
-      <h2>Uso esperado</h2>
-      <ol class="number-list">
-        <li>El cliente solicita la cuenta.</li>
-        <li>El mozo habilita el flujo de propina.</li>
-        <li>El cliente escanea el QR del porcentaje deseado.</li>
-        <li>La app aplica ese porcentaje a la cuenta final.</li>
-      </ol>
-    </section>
+    <section class="section-heading section-heading--center"><p class="eyebrow">C�digos QR</p><h1>Propinas</h1><p>El cliente escanea el c�digo del nivel de satisfacci�n elegido.</p></section>
+    <section id="tipsGrid" class="qr-grid qr-grid--tips" aria-label="C�digos QR de propinas"></section>
   </main>
-
-  <footer class="footer">
-    <span>Deb&Lopers · QR de propinas</span>
-    <button class="link-button" type="button" onclick="window.print()">Imprimir</button>
-  </footer>
-
+  <footer class="footer"><span>Deb&Lopers � QR de propinas</span><button class="link-button" type="button" onclick="window.print()">Imprimir</button></footer>
   <script src="app.js"></script>
 </body>
 </html>
+

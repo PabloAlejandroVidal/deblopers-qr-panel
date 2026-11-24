@@ -9,95 +9,65 @@
 </head>
 <body data-page="home">
   <header class="topbar">
-    <a class="brand" href="index.html" aria-label="Inicio Deb&Lopers">
-      <span class="brand__icon">🍽️</span>
-      <span>
-        <strong>Deb&Lopers</strong>
-        <small>Panel de QR</small>
-      </span>
-    </a>
-
-    <nav class="topbar__nav" aria-label="Navegación principal">
+    <a class="brand" href="index.html" aria-label="Inicio Deb&Lopers"><strong>Deb&Lopers</strong></a>
+    <nav class="topbar__nav" aria-label="Navegaci�n principal">
       <a href="entrance.html">Entrada</a>
       <a href="tables.html">Mesas</a>
       <a href="tips.html">Propinas</a>
     </nav>
-
-    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema">
-      <span data-theme-icon>🌙</span>
-      <span data-theme-label>Oscuro</span>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema" title="Cambiar tema">
+      <span data-theme-icon aria-hidden="true">??</span>
+      <span data-theme-label>Claro</span>
     </button>
   </header>
 
   <main class="page-shell">
-    <section class="hero hero--center">
-      <p class="eyebrow">Sistema auxiliar web</p>
-      <h1>QR estáticos para mostrar en pantalla, imprimir y probar la app</h1>
-      <p class="hero__text">
-        Abrí esta web desde una PC, notebook, tablet o iPhone. Luego escaneá los QR con el Android que tenga instalada la APK de La Comanda.
-      </p>
-      <div class="hero__actions">
-        <a class="btn btn--primary" href="tables.html">Ver QR de mesas</a>
-        <a class="btn" href="entrance.html">Ver QR de entrada</a>
-      </div>
+    <section class="hero hero--center home-intro">
+      <h1>Panel de c�digos QR</h1>
+      <p class="hero__text">Consult� y mostrale a tus clientes los c�digos para ingresar, vincularse a una mesa o elegir una propina. Los QR abren el flujo correspondiente en la app de La Comanda.</p>
+      <nav class="home-actions" aria-label="Secciones de c�digos QR">
+        <a class="home-action" href="entrance.html"><span aria-hidden="true">??</span><span>Entrada</span></a>
+        <a class="home-action" href="tables.html"><span aria-hidden="true">???</span><span>Mesas</span></a>
+        <a class="home-action" href="tips.html"><span aria-hidden="true">??</span><span>Propinas</span></a>
+      </nav>
     </section>
 
-    <section class="cards-grid cards-grid--three" aria-label="Secciones del panel">
-      <article class="feature-card">
-        <div class="feature-card__icon">🚪</div>
-        <h2>Entrada al restaurante</h2>
-        <p>QR para lista de espera y acceso inicial del cliente.</p>
-        <a class="btn btn--small" href="entrance.html">Abrir entrada</a>
-      </article>
-
-      <article class="feature-card">
-        <div class="feature-card__icon">🍽️</div>
-        <h2>Mesas</h2>
-        <p>QR individuales para vincular clientes con una mesa asignada.</p>
-        <a class="btn btn--small" href="tables.html">Abrir mesas</a>
-      </article>
-
-      <article class="feature-card">
-        <div class="feature-card__icon">💰</div>
-        <h2>Propinas</h2>
-        <p>QR para seleccionar el nivel de satisfacción y porcentaje de propina.</p>
-        <a class="btn btn--small" href="tips.html">Abrir propinas</a>
-      </article>
-    </section>
-
-    <section class="panel">
+    <section class="panel report-panel" aria-labelledby="reportTitle">
       <div class="section-heading">
-        <p class="eyebrow">Configuración actual</p>
-        <h2>Deep links disponibles</h2>
+        <p class="eyebrow">Estado del panel</p>
+        <h2 id="reportTitle">Informe de carga</h2>
       </div>
-      <div id="deepLinksSummary" class="deep-links-list"></div>
+      <div class="table-scroll">
+        <table class="report-table">
+          <thead><tr><th scope="col">Dato</th><th scope="col">Resultado</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Conexi�n con la API</th><td id="apiReportStatus"><span class="status-badge" data-state="loading">Consultando.</span></td></tr>
+            <tr><th scope="row">Mesas cargadas</th><td id="tableCountReport">-</td></tr>
+            <tr><th scope="row">QR disponibles</th><td id="qrCountReport">-</td></tr>
+            <tr><th scope="row">Ultima consulta a la API</th><td id="lastAttemptReport">En curso.</td></tr>
+            <tr><th scope="row">Ultima carga correcta</th><td id="updatedAtReport">-</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p id="tablesStatus" class="tables-status report-message" role="status" aria-live="polite"></p>
     </section>
 
-    <section class="stats-grid" aria-label="Estadísticas del panel">
-      <article class="stat-card">
-        <strong id="totalQr">—</strong>
-        <span>QR totales</span>
-      </article>
-      <article class="stat-card">
-        <strong id="totalTables">—</strong>
-        <span>Mesas</span>
-      </article>
-      <article class="stat-card">
-        <strong>3</strong>
-        <span>Secciones</span>
-      </article>
-      <article class="stat-card">
-        <strong>100%</strong>
-        <span>Estático</span>
-      </article>
+    <section class="panel report-panel" aria-labelledby="qrDataTitle">
+      <div class="section-heading">
+        <p class="eyebrow">Contenido de los QR</p>
+        <h2 id="qrDataTitle">Deep links utilizados</h2>
+      </div>
+      <div class="table-scroll">
+        <table class="report-table report-table--links">
+          <thead><tr><th scope="col">Dato</th><th scope="col">Deep link</th></tr></thead>
+          <tbody id="deepLinksSummary"></tbody>
+        </table>
+      </div>
     </section>
   </main>
 
-  <footer class="footer">
-    <span>Deb&Lopers · Panel web estático de QR</span>
-    <span>Listo para GitHub Pages, Netlify, Vercel o Firebase Hosting.</span>
-  </footer>
-
+  <footer class="footer"><span>Deb&Lopers � Panel web de QR</span></footer>
   <script src="app.js"></script>
 </body>
 </html>
+
