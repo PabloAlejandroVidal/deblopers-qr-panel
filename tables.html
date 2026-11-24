@@ -10,22 +10,21 @@
 <body data-page="tables">
   <header class="topbar">
     <a class="brand" href="index.html" aria-label="Volver al inicio"><strong>Deb&Lopers</strong></a>
-    <nav class="topbar__nav" aria-label="Navegaci�n principal">
+    <nav class="topbar__nav" aria-label="Navegación principal">
       <a href="index.html">Inicio</a><a href="entrance.html">Entrada</a><a href="tips.html">Propinas</a>
     </nav>
-    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema" title="Cambiar tema"><span data-theme-icon aria-hidden="true">??</span><span data-theme-label>Claro</span></button>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema" title="Cambiar tema"><span data-theme-icon aria-hidden="true">☀️</span><span data-theme-label>Claro</span></button>
   </header>
   <main class="page-shell">
-    <section class="section-heading section-heading--center"><p class="eyebrow">C�digos QR</p><h1>Mesas</h1><p>Cada c�digo vincula al cliente con una mesa espec�fica.</p></section>
+    <section class="section-heading section-heading--center"><p class="eyebrow">Códigos QR</p><h1>Mesas</h1><p>Cada código vincula al cliente con una mesa específica.</p></section>
     <section id="tablesGrid" class="qr-grid" aria-label="Listado de QR de mesas"></section>
-    <section class="table-controls table-controls--below" aria-label="Actualizar c�digos de mesas">
+    <section class="table-controls table-controls--below" aria-label="Actualizar códigos de mesas">
       <button id="refreshTables" class="btn btn--primary" type="button" aria-busy="false">Actualizar QR</button>
-      <span id="tablesLoading" class="loading-indicator" role="status" hidden><span class="loading-indicator__spinner" aria-hidden="true"></span>Actualizando.</span>
+      <span id="tablesLoading" class="loading-indicator" role="status" hidden><span class="loading-indicator__spinner" aria-hidden="true"></span>Actualizando…</span>
       <p id="tablesStatus" class="tables-status" role="status" aria-live="polite"></p>
     </section>
   </main>
-  <footer class="footer"><span>Deb&Lopers � QR de mesas</span><button class="link-button" type="button" onclick="window.print()">Imprimir</button></footer>
+  <footer class="footer"><span>Deb&Lopers · QR de mesas</span><button class="link-button" type="button" onclick="window.print()">Imprimir</button></footer>
   <script src="app.js"></script>
 </body>
 </html>
-

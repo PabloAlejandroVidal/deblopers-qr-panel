@@ -86,7 +86,7 @@ function setTheme(theme) {
 
   const isLight = theme === 'light';
   document.querySelectorAll('[data-theme-icon]').forEach((el) => {
-    el.textContent = isLight ? '??' : '??';
+    el.textContent = isLight ? '🌙' : '☀️';
   });
   document.querySelectorAll('[data-theme-label]').forEach((el) => {
     el.textContent = isLight ? 'Oscuro' : 'Claro';
@@ -105,11 +105,11 @@ function renderHome() {
         section: 'Mesas',
         rows: tableState.hasSuccessfulLoad && tableState.tables.length
           ? tableState.tables.map((table) => ({ label: `Mesa ${table.number}`, value: deepLink(`table/${table.id}`) }))
-          : [{ label: 'Mesas', value: tableState.loadFailed ? 'No disponibles' : 'Todav�a no hay mesas registradas.' }],
+          : [{ label: 'Mesas', value: tableState.loadFailed ? 'No disponibles' : 'Todavía no hay mesas registradas.' }],
       },
       {
         section: 'Propinas',
-        rows: TIPS.map((tip) => ({ label: `Propina ${tip.percent}% � ${tip.label}`, value: deepLink(`tip/${tip.percent}`) })),
+        rows: TIPS.map((tip) => ({ label: `Propina ${tip.percent}% · ${tip.label}`, value: deepLink(`tip/${tip.percent}`) })),
       },
     ];
     summary.innerHTML = groups.map((group) => `
@@ -122,8 +122,8 @@ function renderHome() {
 
   const count = document.getElementById('tableCountReport');
   const qrCount = document.getElementById('qrCountReport');
-  if (count) count.textContent = tableState.hasSuccessfulLoad ? String(tableState.tables.length) : '-';
-  if (qrCount) qrCount.textContent = tableState.hasSuccessfulLoad ? String(1 + tableState.tables.length + TIPS.length) : '-';
+  if (count) count.textContent = tableState.hasSuccessfulLoad ? String(tableState.tables.length) : '—';
+  if (qrCount) qrCount.textContent = tableState.hasSuccessfulLoad ? String(1 + tableState.tables.length + TIPS.length) : '—';
   updateApiReport();
 }
 
@@ -133,15 +133,15 @@ function updateApiReport() {
   const attempted = document.getElementById('lastAttemptReport');
   if (status) {
     const label = tableState.isLoading
-      ? (tableState.hasSuccessfulLoad ? 'Actualizando.' : 'Consultando.')
+      ? (tableState.hasSuccessfulLoad ? 'Actualizando…' : 'Consultando…')
       : tableState.hasSuccessfulLoad
       ? (tableState.loadFailed ? 'Fallida; datos previos conservados' : 'Correcta')
-      : (tableState.loadFailed ? 'Fallida' : 'Consultando.');
+      : (tableState.loadFailed ? 'Fallida' : 'Consultando…');
     const state = tableState.isLoading ? 'loading' : (tableState.hasSuccessfulLoad && !tableState.loadFailed ? 'success' : (tableState.loadFailed ? 'error' : 'loading'));
     status.innerHTML = `<span class="status-badge" data-state="${state}">${escapeHtml(label)}</span>`;
   }
-  if (updated) updated.textContent = tableState.updatedAt ? formatUpdatedAt(tableState.updatedAt) : '-';
-  if (attempted) attempted.textContent = tableState.lastAttemptAt ? formatUpdatedAt(tableState.lastAttemptAt) : 'En curso.';
+  if (updated) updated.textContent = tableState.updatedAt ? formatUpdatedAt(tableState.updatedAt) : '—';
+  if (attempted) attempted.textContent = tableState.lastAttemptAt ? formatUpdatedAt(tableState.lastAttemptAt) : 'En curso…';
 }
 
 function renderEntrance() {
@@ -156,12 +156,12 @@ function renderTables() {
   if (!grid) return;
 
   if (!tableState.hasSuccessfulLoad) {
-    grid.innerHTML = `<p class="empty-state">${tableState.loadFailed ? 'No se pudieron cargar las mesas. Revis� el estado y volv� a intentar.' : 'Cargando c�digos de mesas.'}</p>`;
+    grid.innerHTML = `<p class="empty-state">${tableState.loadFailed ? 'No se pudieron cargar las mesas. Revisá el estado y volvé a intentar.' : 'Cargando códigos de mesas…'}</p>`;
     return;
   }
 
   if (tableState.tables.length === 0) {
-    grid.innerHTML = '<p class="empty-state">Todav�a no hay mesas registradas.</p>';
+    grid.innerHTML = '<p class="empty-state">Todavía no hay mesas registradas.</p>';
     return;
   }
 
@@ -183,17 +183,17 @@ function renderTips() {
 
 function validateTablesResponse(payload) {
   if (!payload || !Array.isArray(payload.tables)) {
-    throw new Error('La respuesta de la API no contiene una lista v�lida de mesas.');
+    throw new Error('La respuesta de la API no contiene una lista válida de mesas.');
   }
 
   const ids = new Set();
   const numbers = new Set();
   return payload.tables.map((table) => {
     if (!table || !Number.isSafeInteger(table.id) || !Number.isSafeInteger(table.number)) {
-      throw new Error('La API devolvi� una mesa con identificador o n�mero inv�lido.');
+      throw new Error('La API devolvió una mesa con identificador o número inválido.');
     }
     if (ids.has(table.id) || numbers.has(table.number)) {
-      throw new Error('La API devolvi� identificadores o n�meros de mesa duplicados.');
+      throw new Error('La API devolvió identificadores o números de mesa duplicados.');
     }
     ids.add(table.id);
     numbers.add(table.number);
@@ -231,7 +231,7 @@ async function loadTables() {
   tableState.isLoading = true;
   tableState.lastAttemptAt = new Date();
   tableState.loadFailed = false;
-  updateTableStatus(tableState.hasSuccessfulLoad ? 'Actualizando las mesas.' : 'Cargando las mesas.', 'loading');
+  updateTableStatus(tableState.hasSuccessfulLoad ? 'Actualizando las mesas…' : 'Cargando las mesas…', 'loading');
 
   tableState.pendingRequest = (async () => {
     try {
@@ -240,7 +240,7 @@ async function loadTables() {
         headers: { apikey: CONFIG.supabasePublishableKey },
         cache: 'no-store',
       });
-      if (!response.ok) throw new Error(`La API respondi� con el estado ${response.status}.`);
+      if (!response.ok) throw new Error(`La API respondió con el estado ${response.status}.`);
 
       tableState.tables = validateTablesResponse(await response.json());
       tableState.hasSuccessfulLoad = true;
@@ -248,15 +248,15 @@ async function loadTables() {
       tableState.updatedAt = new Date();
       renderTables();
       renderHome();
-      const updateLabel = `Ultima actualizaci�n exitosa: ${formatUpdatedAt(tableState.updatedAt)}.`;
-      updateTableStatus(tableState.tables.length ? updateLabel : `Todav�a no hay mesas registradas. ${updateLabel}`, 'success');
+      const updateLabel = `Última actualización exitosa: ${formatUpdatedAt(tableState.updatedAt)}.`;
+      updateTableStatus(tableState.tables.length ? updateLabel : `Todavía no hay mesas registradas. ${updateLabel}`, 'success');
     } catch (error) {
       tableState.loadFailed = true;
       const detail = error instanceof TypeError
-        ? 'No se pudo conectar con el servicio. Revis� la conexi�n e intent� actualizar de nuevo.'
-        : error.message || 'Ocurri� un error al cargar las mesas.';
+        ? 'No se pudo conectar con el servicio. Revisá la conexión e intentá actualizar de nuevo.'
+        : error.message || 'Ocurrió un error al cargar las mesas.';
       const warning = tableState.hasSuccessfulLoad
-        ? `No se pudieron actualizar las mesas. Se conservan los �ltimos datos v�lidos; podr�an estar desactualizados. ${detail}`
+        ? `No se pudieron actualizar las mesas. Se conservan los últimos datos válidos; podrían estar desactualizados. ${detail}`
         : `No se pudieron cargar las mesas. ${detail}`;
       updateTableStatus(warning, 'error');
       renderTables();
@@ -289,4 +289,3 @@ function initPage() {
 }
 
 document.addEventListener('DOMContentLoaded', initPage);
-
